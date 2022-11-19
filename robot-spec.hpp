@@ -4,17 +4,42 @@
 #include <tuple>
 #include <string>
 #include <map>
+#include <stack>
 
 using part = int;
 using cost = int;
+using numPreviousStages = int;
+enum robotType{OMNIDROID, ROBOTAMATON};
 class RobotSpecification{
 private:
     std::string robotName;
+    robotType type;
+    int numberOfStagesInConstruction;
+    std::stack<std::pair<cost, numPreviousStages>> robotamatonSpecification;
     std::map<part, std::vector<part>> assemblySpecification;
     std::vector<cost> partAssemblySprocketCosts;
+    int numberOfParts;
+    int numberOfAssemblyDependencies;
 public:
     RobotSpecification();
     ~RobotSpecification();
+    void pushRobotamataStep(cost costVal, numPreviousStages numPrevStages){
+        this->robotamatonSpecification.push(std::pair<cost, numPreviousStages>(costVal, numPrevStages));
+    }
+    std::pair<cost, numPreviousStages> popRobotamataStep(){
+        auto topval = this->robotamatonSpecification.top();
+        this->robotamatonSpecification.pop();
+        return topval;
+    }
+    robotType getRobotType(){return type;}
+    void setRobotType(robotType type){this->type = type;}
+    void setNumberOfConstructionStages(int number){this->numberOfStagesInConstruction = number;}
+    int getNumberOfConstructionStages(){return this->numberOfStagesInConstruction;}
+    int getNumberOfParts(){return numberOfParts;}
+    int getNumberOfAssemblyDependencies(){return this->numberOfAssemblyDependencies;}
+    void setNumberOfParts(int numberOfParts){this->numberOfParts = numberOfParts;}
+    void setNumberOfAssemblyDependencies(int numberOfAssemblyDependencies){
+        this->numberOfAssemblyDependencies = numberOfAssemblyDependencies;}
     std::string getName(){ return robotName; }
     void setName(std::string name) { this->robotName = name; }
     std::vector<part> getRequiredPartsToAssemblePart(part partToAssemble){
@@ -33,16 +58,20 @@ public:
             std::vector<part> *requirementList = &(iteratorToPartInMap->second);
             requirementList->push_back(requirementPart);
         }
+        return;
     };
     void addAssemblyCost(cost c){
-        partAssemblySprocketCosts.push_back(c);
+        this->partAssemblySprocketCosts.push_back(c);
+        return;
     }
     cost getAssemblyCost(part whichPart){
-        return partAssemblySprocketCosts.at(whichPart);
+        return this->partAssemblySprocketCosts.at(whichPart);
     }
     cost getTotalCostForPart(part whichPart); //recursive function to get total cost
     int getPartCount(){
-        return assemblySpecification.size();
+        return this->numberOfParts;
+
     }
+    void print();
 };
 #endif // ROBOT-SPEC_H_
