@@ -20,7 +20,21 @@ RobotSpecification::~RobotSpecification(){
 }
 
 cost RobotSpecification::getTotalCostForPart(part whichPart){
-    return 0; //TODO: Implement this function
+    //return 0; //TODO: Implement this function
+
+    switch(this->type){
+        case OMNIDROID:
+            {
+                std::map<part, cost> partCosts;
+            }
+            break;
+        case ROBOTAMATA:
+            {
+
+            }
+            break;
+    }
+
 }
 
 void RobotSpecification::print(){

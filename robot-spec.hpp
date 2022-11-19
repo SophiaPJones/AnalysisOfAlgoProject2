@@ -15,7 +15,7 @@ private:
     std::string robotName;
     robotType type;
     int numberOfStagesInConstruction;
-    std::stack<std::pair<cost, numPreviousStages>> robotamatonSpecification;
+    std::vector<std::pair<cost, numPreviousStages>> robotamatonSpecification;
     std::map<part, std::vector<part>> assemblySpecification;
     std::vector<cost> partAssemblySprocketCosts;
     int numberOfParts;
@@ -24,12 +24,10 @@ public:
     RobotSpecification();
     ~RobotSpecification();
     void pushRobotamataStep(cost costVal, numPreviousStages numPrevStages){
-        this->robotamatonSpecification.push(std::pair<cost, numPreviousStages>(costVal, numPrevStages));
+        this->robotamatonSpecification.push_back(std::pair<cost, numPreviousStages>(costVal, numPrevStages));
     }
-    std::pair<cost, numPreviousStages> popRobotamataStep(){
-        auto topval = this->robotamatonSpecification.top();
-        this->robotamatonSpecification.pop();
-        return topval;
+    std::vector<std::pair<cost, numPreviousStages>> getRobotamataSteps(){
+        return this->robotamatonSpecification;
     }
     robotType getRobotType(){return type;}
     void setRobotType(robotType type){this->type = type;}
