@@ -4,7 +4,7 @@
 #include <string>
 #include "robot-spec.hpp"
 
-#define DEBUG 0;
+#define DEBUG 0
 
 enum robotParsingStep{GET_ROBOT_COUNT, GET_ROBOT_ASSEMBLY_INFO, GET_ROBOT_NAME,
     GET_PART_ASSEMBLY_INSTRUCTIONS, GET_PART_ASSEMBLY_COSTS};
@@ -13,16 +13,12 @@ bool isStringWhitespace(std::string s);
 int getTokenCount(std::string, char delim);
 
 int main(int argc, char *argv[]) {
-    if(argc <= 1){ //check if the user has provided a file name as an argument.
-        std::cout << "Invalid Usage: You must provide a robot assembly file as a command line argument to this program." << std::endl;
-        return 1;
-    }
     std::ifstream inFile;
     int robotCount = 1;
     int currentRobotBeingParsed = 0;
     std::vector<RobotSpecification> robotList;
     std::string currentLine;
-    inFile.open(argv[1], std::ios::in);
+    inFile.open("input.txt", std::ios::in);
     if(!inFile){
         std::cout << "Could not open file " << argv[1] << "." << std::endl;
         return 1;
@@ -48,8 +44,8 @@ int main(int argc, char *argv[]) {
         int numberOfPartsForCurrentRobot = 0;
         int numberOfAssemblyDependencies = 0;
         int currentAssemblyInstruction = 0;
-        int currentRobotamataNumberOfConstructionSteps = 0;
-        int currentConstructionStepRobotamata = 0;
+        int currentRobotomatonNumberOfConstructionSteps = 0;
+        int currentConstructionStepRobotomaton = 0;
         for(std::string currentLine; std::getline(inFile, currentLine);){
             //This reads through the input file line-by-line, and loads the current line into the currentLine variable.
             if(DEBUG) std::cout << currentLine << std::endl;
@@ -107,14 +103,15 @@ int main(int argc, char *argv[]) {
                                 robotList[currentRobotBeingParsed].setNumberOfAssemblyDependencies(numAssemblyDependencies);
                                 currentAssemblyInstruction = 0;
                                 currentRobotType = OMNIDROID;
+                                robotList[currentRobotBeingParsed].setRobotType(OMNIDROID);
                                 break;
                             case 1:
                                 //TODO: robotamata stuff
                                 stringStream >> numberOfStagesInConstruction;
-                                currentRobotamataNumberOfConstructionSteps = numberOfStagesInConstruction;
-                                currentConstructionStepRobotamata = 0;
-                                currentRobotType = ROBOTAMATON;
-                                robotList[currentRobotBeingParsed].setRobotType(ROBOTAMATON);
+                                currentRobotomatonNumberOfConstructionSteps = numberOfStagesInConstruction;
+                                currentConstructionStepRobotomaton = 0;
+                                currentRobotType = ROBOTOMATON;
+                                robotList[currentRobotBeingParsed].setRobotType(ROBOTOMATON);
                                 robotList[currentRobotBeingParsed].setNumberOfConstructionStages(numberOfStagesInConstruction);
                                 break;
                             default:
@@ -148,8 +145,8 @@ int main(int argc, char *argv[]) {
                             }
                             else{
                                 stringStream >> costOfCurrentPart >> numPrevStages;
-                                robotList[currentRobotBeingParsed].pushRobotamataStep(costOfCurrentPart, numPrevStages);
-                                currentConstructionStepRobotamata++;
+                                robotList[currentRobotBeingParsed].pushRobotomatonStep(costOfCurrentPart, numPrevStages);
+                                currentConstructionStepRobotomaton++;
                             }
                         }
                         catch(std::exception& e){
@@ -162,10 +159,11 @@ int main(int argc, char *argv[]) {
                             currentAssemblyInstruction = 0;
                             numberOfAssemblyDependencies = 0;
                         }
-                        else if(currentRobotType == ROBOTAMATON && currentConstructionStepRobotamata >= currentRobotamataNumberOfConstructionSteps){
+                        else if(currentRobotType == ROBOTOMATON && currentConstructionStepRobotomaton >= currentRobotomatonNumberOfConstructionSteps){
                             currentStep = GET_ROBOT_NAME;
-                            currentConstructionStepRobotamata = 0;
-                            currentRobotamataNumberOfConstructionSteps = 0;
+                            currentConstructionStepRobotomaton = 0;
+                            currentRobotomatonNumberOfConstructionSteps = 0;
+                            currentRobotBeingParsed++;
                         }
                     }
                     break;
@@ -185,8 +183,6 @@ int main(int argc, char *argv[]) {
                         if(currentPartForAssemblyCostParsing >= currentRobotPartCount){
                             //if we've now parsed every part's cost we now jump to reading the name of the next robot.
                             currentStep = GET_ROBOT_NAME;
-
-                            robotList[currentRobotBeingParsed].print();
                             currentRobotBeingParsed++;
                             currentPartForAssemblyCostParsing = 0; //Reset variables used for part counting
                             currentRobotPartCount = 0;
@@ -195,8 +191,36 @@ int main(int argc, char *argv[]) {
                     break;
             }
         }
-        return 0;
     }
+    //print all robots read to stdout
+    for(auto it = robotList.begin(); it != robotList.end(); it++){
+        it->print();
+    }
+    int currentCost = 0;
+    int ithRobot = 0;
+    for(auto jt = robotList.begin() ; jt != robotList.end(); jt++){
+        robotType typ = jt->getRobotType();
+        switch(typ){
+            case OMNIDROID: {currentCost = jt->getTotalCostForPart(jt->getNumberOfParts()-1);}break;
+            case ROBOTOMATON: {currentCost = jt->getTotalCostForPart(jt->getNumberOfConstructionStages());}break;
+        }
+        std::cout << "This is the cost of the " << ithRobot;
+        switch(ithRobot % 100){
+            case 11: case 12: case 13:
+                {std::cout << "th";}
+                break;
+            default: switch(ithRobot % 10){
+                case 1: {std::cout << "st";}break;
+                case 2: {std::cout << "nd";}break;
+                case 3: {std::cout << "rd";}break;
+                default: {std::cout << "th";}break;
+            }
+        }
+        std::cout << " robot: " << currentCost << std::endl;
+
+        ithRobot++;
+    }
+    return 0;
 }
 
 bool isStringWhitespace(std::string s){

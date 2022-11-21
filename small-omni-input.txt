@@ -1,4 +1,4 @@
-3
+4
 
 omnidroid
 5 5
@@ -32,3 +32,12 @@ robotomaton
 2 1
 10 1
 7 3
+
+robotomaton
+5
+4 0
+5 1
+7 1
+14 3
+22 1
+

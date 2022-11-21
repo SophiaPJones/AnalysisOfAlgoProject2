@@ -9,13 +9,13 @@
 using part = int;
 using cost = int;
 using numPreviousStages = int;
-enum robotType{OMNIDROID, ROBOTAMATON};
+enum robotType{OMNIDROID, ROBOTOMATON};
 class RobotSpecification{
 private:
     std::string robotName;
     robotType type;
     int numberOfStagesInConstruction;
-    std::vector<std::pair<cost, numPreviousStages>> robotamatonSpecification;
+    std::vector<std::pair<cost, numPreviousStages>> robotomatonSpecification;
     std::map<part, std::vector<part>> assemblySpecification;
     std::vector<cost> partAssemblySprocketCosts;
     int numberOfParts;
@@ -23,11 +23,11 @@ private:
 public:
     RobotSpecification();
     ~RobotSpecification();
-    void pushRobotamataStep(cost costVal, numPreviousStages numPrevStages){
-        this->robotamatonSpecification.push_back(std::pair<cost, numPreviousStages>(costVal, numPrevStages));
+    void pushRobotomatonStep(cost costVal, numPreviousStages numPrevStages){
+        this->robotomatonSpecification.push_back(std::pair<cost, numPreviousStages>(costVal, numPrevStages));
     }
-    std::vector<std::pair<cost, numPreviousStages>> getRobotamataSteps(){
-        return this->robotamatonSpecification;
+    std::vector<std::pair<cost, numPreviousStages>> getRobotomatonSteps(){
+        return this->robotomatonSpecification;
     }
     robotType getRobotType(){return type;}
     void setRobotType(robotType type){this->type = type;}
