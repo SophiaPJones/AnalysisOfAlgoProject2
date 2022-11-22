@@ -58,23 +58,21 @@ cost RobotSpecification::getTotalCostForPart(part whichPart){
                 std::cout << "robo case in robot-spec\n";
                 std::map<part, cost> partCosts;
                 std::vector<std::pair<cost, numPreviousStages>> steps = getRobotomatonSteps();
-                std::cout << "steps vector: \n";
-                for(auto it = steps.begin(); it != steps.end(); it++){
-                    std::cout << "cost: " << it->first << " numPrevParts: " << it->second <<std::endl;
-                }
+                int numSteps = this->numberOfStagesInConstruction;
+                // std::cout << "steps vector: \n";
+                // for(auto it = steps.begin(); it != steps.end(); it++){
+                //     std::cout << "cost: " << it->first << " numPrevParts: " << it->second <<std::endl;
+                // }
+
                 //for the number of instructions
-                for (int i = 0; i < numberOfAssemblyDependencies; i++)
+                for (int i = 0; i < numSteps; i++)
                 {
-                    std::cout << steps.at(i).first << " " << steps.at(i).second << "\n";
-
-
                     //set the cost of each part to its "by itself" cost
                     partCosts[i] = steps.at(i).first;
 
                     //if this part has dependencies on previous parts
                     if (steps.at(i).second != 0)
                     {
-                        std::cout << steps.at(i).second << "\n";
 
                         //UNSURE IF CORRECT
                         //iterate through the previous j steps and add their
@@ -85,8 +83,8 @@ cost RobotSpecification::getTotalCostForPart(part whichPart){
                         }
                     }
                 }
-
-                return partCosts[numberOfParts-1];
+                std::cout << partCosts[numSteps-1] << "\n";
+                return partCosts[numSteps-1];
             }
             break;
     }

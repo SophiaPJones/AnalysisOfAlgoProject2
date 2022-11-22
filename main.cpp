@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
     int currentRobotBeingParsed = 0;
     std::vector<RobotSpecification> robotList;
     std::string currentLine;
-    inFile.open("input.txt", std::ios::in);
+    inFile.open("inputall.txt", std::ios::in);
     if(!inFile){
         std::cout << "Could not open file " << argv[1] << "." << std::endl;
         return 1;
@@ -196,6 +196,12 @@ int main(int argc, char *argv[]) {
     for(auto it = robotList.begin(); it != robotList.end(); it++){
         it->print();
     }
+
+    //CREATE OUTPUT FILE
+    std::ofstream outputFile("output.txt");
+
+
+
     int currentCost = 0;
     int ithRobot = 0;
     for(auto jt = robotList.begin() ; jt != robotList.end(); jt++){
@@ -219,7 +225,14 @@ int main(int argc, char *argv[]) {
         std::cout << " robot: " << currentCost << std::endl;
 
         ithRobot++;
+
+        //WRITE TO THE OUTPUT FILE
+        outputFile << currentCost << std::endl;
     }
+
+    //CLOSE OUTPUT FILE
+    outputFile.close();
+    
     return 0;
 }
 
