@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
     int currentRobotBeingParsed = 0;
     std::vector<RobotSpecification> robotList;
     std::string currentLine;
-    inFile.open("inputall.txt", std::ios::in);
+    inFile.open("input.txt", std::ios::in);
     if(!inFile){
         std::cout << "Could not open file " << argv[1] << "." << std::endl;
         return 1;
